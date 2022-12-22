@@ -1,49 +1,36 @@
-import { useState} from "react";
-
+import { useState, useEffect,  useContext} from "react";
+import { CurrentContext } from "../context/ContextProvider";
+//import {useContext} from "react";
 
 export const NotepadSectionPage =() => {
 
-	const [inHover, setHover] = useState([
-		{ name: "1", active: false },
-		{ name: "2", active: false },
-		{ name: "3", active: false },
-		{ name: "4", active: false },
-		{ name: "5", active: false },
-		{ name: "6", active: true },
-		{ name: "7", active: false },
-		{ name: "8", active: false },
-		{ name: "9", active: false },
-		{ name: "10", active: true }
-	]);
+	const {currentSection} = useContext(CurrentContext);
+	const {itemsList} = useContext(CurrentContext);
+	const [filteredArray, setFilteredArray] = useState(itemsList);
 
-	const toggleHover = (idx) => {
-		setHover((inHover) =>
-			inHover.map((obj, i) => {
-				if (i === idx) {
-					let active = true;
-					obj.active ? active = false: active = true;
-					return {...obj, active}
-				}
-				return obj;
-			})
-		);
-	};
+	useEffect(() => {
+		setFilteredArray((_) => {
+			const listSectionArray = itemsList.filter(item => item.section == currentSection);
+			return listSectionArray;
+		});
+	}, [currentSection]);
+
+	const listItems = filteredArray.map((item) =>
+		<div  className="row wrapper" key={item.key}>
+
+			<div data-value={item.key} className={`col-12 text-nowrap text-break`}>{item.name}</div>
+			<div  className="col-12 text-break" style={{   border: '1px solid lightgray' }}> {item.content}</div>
+		</div >
+
+	);
 
 
-	return <div>
-		<h2>NotepadSectionPage</h2>
-		{inHover.map((item, idx) => (
-			<div
-				onMouseEnter={() => toggleHover(idx)}
-				onMouseLeave={() => toggleHover(idx)}
-				key={item.name}
-			>
-				Hover {item.name} over me!
-				{item.active && <div>Hi {item.name}</div>}
-			</div>
-		))}
 
-
-	</div>
+	return <>
+		<div>
+			<h3>{currentSection}</h3>
+			{listItems}
+		</div>
+	</>
 
 }

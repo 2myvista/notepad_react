@@ -1,59 +1,125 @@
 import {useContext, useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import { CurrentContext } from "../context/ContextProvider";
 
-const itemsList = [
-	{ key: '0', section: 'linux', name: 'файлы бана', content: "нахождение файлов бана /var/log/fail2ban.log ---- cat fail2ban.log | grep Ban" },
-	{ key: '1', section: 'linux', name: 'баним IP-адрес', content: "fail2ban-client set ssh banip IP-адрес fail2ban-client nginx banip IP-адрес" },
-	{ key: '2', section: 'git', name: 'сборка сертификата', content: "root@ipc2u:~# cat 222423165repl_2.crt SectigoRSADomainValidationSecureServerCA.crt COMODORSAAddTrustCA.crt AddTrustExternalCARoot.crt > ipc2u.de.crt" },
-	{ key: '3', section: 'git', name: 'git clone', content: "возможен вараиант, когда пнрисылают только 1 сертификат  для продления BEGIN CERTIFICATE MII .... QxrQ= END CERTIFICATE в таком случае из файла ipc2u.by.crt удалям самый верхний блок ----BEGIN CER\\nTIFICATE-----   ...  ----END CERTIFICATE и заменяем его присланным" },
-	{ key: '4', section: 'linux', name: 'time mysqldump', content: "time mysqldump \\n -uweb -pbzYCA3BVY4rfYDyt web_ipc2u.ru > web_ipc2u.ru_15022020.sq \\n wget --no-check-certificate https://ipc2u.com/files/web_ipc2u.com_18062018.sql\\n" },
-	{ key: '5', section: 'ssh', name: 'файлов бана', content: "нахождение файлов бана /var/log/fail2ban.log ---- cat fail2ban.log | grep Ban" },
-	{ key: '6', section: 'git', name: 'ssl сертификаты', content: "root@ipc2u:~# cat 222423165repl_2.crt SectigoRSADomainValidationSecureServerCA.crt COMODORSAAddTrustCA.crt AddTrustExternalCARoot.crt > ipc2u.de.crt" },
-	{ key: '7', section: 'linux', name: 'установка npm',content : "на площадке после установки npm необходимо удалить два пакета gm  и gmsmith, которые у нас помечены как необязатльные " },
-];
+
 
 export const NotepadOverviewPage = () => {
 
-	const arrHide=Array();
-
-	itemsList.map((item)=>{
-		arrHide[item.key]={ name: item.key, active: false }
-	})
-
-	const state = {
-		showBox: false
-	};
-
+	const navigate = useNavigate();
 	const {currentSection, setCurSection} = useContext(CurrentContext);
+	const {itemsList, setItemsList} = useContext(CurrentContext);
 
-	//const [inputSection, setInputSection] = useState('');
 	const [inputName, setInputName] = useState('');
 	const [filteredArray, setFilteredArray] = useState(itemsList);
 
 	const inputNameHandler = e => {
 		setInputName(e.target.value);
 	};
+	const showHideHandler = e => {
 
-	const [isShownHoverContent, setIsShownHoverContent] = useState('')
+		/*
+		https://reactdev.ru/handbook/hooks-custom/#extracting-a-custom-hook
+		* сначала выбираем ты строку, у которой надо скрыть/открыть данные
+			а затем уже скрываем/открываем данные
+		* Цель нашего хука useFriendStatus — подписать нас на статус друга. Поэтому он принимает в качестве аргумента friendID и возвращает статус друга в сети:
+			function useFriendStatus(friendID) {
+			  const [isOnline, setIsOnline] = useState(null)
 
-	const [hover, setHover] = useState(arrHide);
+			  // ...
 
-	const onClickHandler = event => {
-		//
-		let el = event.target;
-		console.log(el);
-		console.log(event.target.dataset);
-		//el.classList.add('active');
-		//console.log(el.attr('value'));
-		setHover( (e)=>{
-			//console.log(e);
-		})
+			  return isOnline
+			}
+		*
+
+		Вначале нашей целью было удалить дублированную логику из компонентов FriendStatus и FriendListItem. Они оба хотят знать, есть ли друг в сети.
+
+		Теперь, когда мы извлекли эту логику в хук useFriendStatus, мы можем его использовать:
+
+
+		function FriendStatus(props) {
+		  const isOnline = useFriendStatus(props.friend.id)
+
+		  if (isOnline === null) {
+		    return 'Загрузка...'
+		  }
+		  return isOnline ? 'В сети' : 'Не в сети'
+		}
+
+		function FriendListItem(props) {
+		  const isOnline = useFriendStatus(props.friend.id)
+
+		  return (
+		    <li style={{ color: isOnline ? 'green' : 'black' }}>
+		      {props.friend.name}
+		    </li>
+		  )
+		}
+		*********************************************************************************************
+
+		Совет: Передача информации между хуками¶
+			Поскольку хуки являются функциями, мы можем передавать информацию между ними.
+
+			Продемонстрируем это, используя другой компонент из нашего гипотетического примера чата. Это средство выбора получателей сообщений чата, которое показывает, находится ли выбранный в данный момент друг в сети:
+
+
+			const friendList = [
+			  { id: 1, name: 'Татьяна' },
+			  { id: 2, name: 'Алла' },
+			  { id: 3, name: 'Лиля' },
+			]
+
+			function ChatRecipientPicker() {
+			  const [recipientID, setRecipientID] = useState(1)
+			  const isRecipientOnline = useFriendStatus(recipientID)
+
+			  return (
+			    <>
+			      <Circle color={isRecipientOnline ? 'green' : 'red'} />
+			      <select
+			        value={recipientID}
+			        onChange={(e) =>
+			          setRecipientID(Number(e.target.value))
+			        }
+			      >
+			        {friendList.map((friend) => (
+			          <option key={friend.id} value={friend.id}>
+			            {friend.name}
+			          </option>
+			        ))}
+			      </select>
+			    </>
+			  )
+			}
+			Мы сохраняем выбранный в настоящее время идентификатор друга в переменной состояния recipientID и обновляем его, если пользователь выбирает другого друга в <select>.
+
+			Поскольку вызов хука useState даёт нам последнее значение переменной состояния recipientID, мы можем передать его в наш пользовательский хук useFriendStatus в качестве аргумента:
+
+
+			const [recipientID, setRecipientID] = useState(1)
+			const isRecipientOnline = useFriendStatus(recipientID)
+			Это позволяет нам узнать, находится ли выбранный друг в сети. Если мы выберем другого друга и обновим переменную состояния recipientID, наш хук useFriendStatus отменит подписку на ранее выбранного друга и подпишется на статус вновь выбранного.
+
+		* */
+
+		//console.log(e.target.dataset.value);
+		if (isOpen)
+			setOpen(false);
+		else
+			setOpen(true);
+	};
+
+	const [isOpen, setOpen] = useState();
+
+	const handleSectionSelect= (section)  => {
+		setCurSection(section);
+		navigate(`section/${section}`);
 	}
 
-	/*= e => {
-		console.log(key);
-	//	console.log(e.target);
-	};*/
+	const handleItemSelect= (item)  => {
+		setCurSection(item.section);
+		navigate(`item/${item.code}`)
+	}
 
 	function arrayUnique(array) {
 		var a = array.concat();
@@ -68,44 +134,38 @@ export const NotepadOverviewPage = () => {
 
 	useEffect(() => {
 		setFilteredArray((_) => {
-			//const newArray = itemsList.filter(item => item.name.includes(inputName)).filter(item => item.section.includes(inputSection));
 			const listSectionArray = itemsList.filter(item => item.section.includes(inputName));
 			const listNameArray = itemsList.filter(item => item.name.toLowerCase().includes(inputName.toLowerCase()));
 			const newArray = arrayUnique(listSectionArray.concat(listNameArray))
 			return newArray;
 		});
-	}, [inputName, currentSection]);
+	}, [inputName, currentSection, itemsList]);
 
 	const listItems = filteredArray.map((item) =>
 			<div className="row wrapper" key={item.key}>
-				<div className="col-4" style={{ border: '1px solid lightgray' }}>{item.section}</div>
-				<div onClick={onClickHandler } data-value={item.key} className={`col-2 text-nowrap text-break`} style={{   border: '1px solid lightgray' }}>{item.name}</div>{/*onMouseEnter*/}
-				<div className="col-4 text-break " style={{   border: '1px solid lightgray' }}> {item.content}</div>
+				<div onClick={()=> handleSectionSelect(item.section)} className="col-3" style={{ border: '1px solid lightgray', cursor: "pointer" }}>{item.section}</div>
+				<div  onClick={()=> handleItemSelect(item)} data-value={item.key} className={`col-9 text-nowrap text-break`} style={{border: '1px solid lightgray', cursor: "pointer" }}>{item.name}</div>{/*onMouseEnter*/}
+				{isOpen ? <div  className="col-12 text-break" style={{   border: '1px solid lightgray' }}> {item.content}</div>:''}
 			</div >
-
 	);
 
 	return (
 		<div>
-			<h3>{currentSection}</h3>
 			<hr />
-			<form style={{ maxWidth: '23rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-				<div>
+			<div className="row" style={{  display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+				<div className="col-6">
 					<label htmlFor="input-name" className="pe-1">Фильтр </label>
-					<input type="text" id="input-name" autoComplete="off"  onChange={inputNameHandler} style={{ height: '1.5rem', width: '10rem', marginTop: '1rem' }} />
+					<input type="text"  id="input-name" autoComplete="off"  onChange={inputNameHandler} style={{ height: '1.5rem', width: '10rem', marginTop: '1rem' }} />
 				</div>
-			</form>
-			<br />
+				<div className="col-6">
+					<button className="btn btn-outline-secondary btn-sm" onClick={showHideHandler}>{isOpen ?'скрыть':'показать'} все</button>
+				</div>
+			</div>
 			<div className="row text-center container" style={{  }}>
-
-					<div className="col-4">Раздел</div>
-					<div className="col-4">Название</div>
-
+					<div className="col-3">Раздел</div>
+					<div className="col-9">Название</div>
 				{listItems}
 			</div>
-
-
-
 		</div>
 	);
 };
