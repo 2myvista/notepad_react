@@ -14,9 +14,8 @@ export const SectionList = () => {
 	}
 
 	const listSections = sectionsList.map((item, index) =>
-			<button type="button" key={item} className={`btn round-lg ${item == currentSection ? 'active' : ''}`} onClick={(e)=>{handleSectionSelect(e.target.name);}}  name={item}>{item}</button>);
-	return <div className="sectionsList">
-		<h3>sectionsList</h3>
+			<button type="button" key={item} className={`btn round-lg ${item === currentSection ? 'active' : ''}`} onClick={(e)=>{handleSectionSelect(e.target.name);}}  name={item}>{item}</button>);
+	return <div className="sectionsList mt-2">
 		<div className="d-grid gap-2 ">
 			{listSections}
 		</div>

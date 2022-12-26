@@ -1,30 +1,37 @@
 import { useState, useEffect,  useContext} from "react";
+import { useNavigate } from "react-router-dom";
 import { CurrentContext } from "../context/ContextProvider";
-//import {useContext} from "react";
 
 export const NotepadSectionPage =() => {
 
-	const {currentSection} = useContext(CurrentContext);
+	const navigate = useNavigate();
+	const {currentSection, setCurSection} = useContext(CurrentContext);
+	const {setCurItem} = useContext(CurrentContext);
 	const {itemsList} = useContext(CurrentContext);
 	const [filteredArray, setFilteredArray] = useState(itemsList);
 
+	const {getFormatedText} = useContext(CurrentContext);
+
+	const handleItemSelect= (item)  => {
+		setCurSection(item.section);
+		setCurItem(item);
+		navigate(`/item/${item.code}`)
+	}
+
 	useEffect(() => {
 		setFilteredArray((_) => {
-			const listSectionArray = itemsList.filter(item => item.section == currentSection);
+			const listSectionArray = itemsList.filter(item => item.section === currentSection);
 			return listSectionArray;
 		});
 	}, [currentSection]);
 
 	const listItems = filteredArray.map((item) =>
-		<div  className="row wrapper" key={item.key}>
+		<div className="row wrapper mb-2" key={item.key}>
 
-			<div data-value={item.key} className={`col-12 text-nowrap text-break`}>{item.name}</div>
-			<div  className="col-12 text-break" style={{   border: '1px solid lightgray' }}> {item.content}</div>
-		</div >
-
+			<div onClick={()=> handleItemSelect(item)} className="col-12 text-nowrap text-break pb-1 fw-bolder" style={{ cursor: "pointer" }}>{item.name}</div>
+			<div className="col-12 text-break" style={{   border: '1px solid lightgray' }}> {getFormatedText(item.content)}</div>
+		</div>
 	);
-
-
 
 	return <>
 		<div>

@@ -8,6 +8,9 @@ export const NotepadOverviewPage = () => {
 
 	const navigate = useNavigate();
 	const {currentSection, setCurSection} = useContext(CurrentContext);
+	const {currentItem, setCurItem} = useContext(CurrentContext);
+	const {getFormatedText} = useContext(CurrentContext);
+
 	const {itemsList, setItemsList} = useContext(CurrentContext);
 
 	const [inputName, setInputName] = useState('');
@@ -17,7 +20,6 @@ export const NotepadOverviewPage = () => {
 		setInputName(e.target.value);
 	};
 	const showHideHandler = e => {
-
 		/*
 		https://reactdev.ru/handbook/hooks-custom/#extracting-a-custom-hook
 		* сначала выбираем ты строку, у которой надо скрыть/открыть данные
@@ -57,7 +59,7 @@ export const NotepadOverviewPage = () => {
 		}
 		*********************************************************************************************
 
-		Совет: Передача информации между хуками¶
+		Совет: Передача информации между хуками
 			Поскольку хуки являются функциями, мы можем передавать информацию между ними.
 
 			Продемонстрируем это, используя другой компонент из нашего гипотетического примера чата. Это средство выбора получателей сообщений чата, которое показывает, находится ли выбранный в данный момент друг в сети:
@@ -101,8 +103,6 @@ export const NotepadOverviewPage = () => {
 			Это позволяет нам узнать, находится ли выбранный друг в сети. Если мы выберем другого друга и обновим переменную состояния recipientID, наш хук useFriendStatus отменит подписку на ранее выбранного друга и подпишется на статус вновь выбранного.
 
 		* */
-
-		//console.log(e.target.dataset.value);
 		if (isOpen)
 			setOpen(false);
 		else
@@ -118,6 +118,7 @@ export const NotepadOverviewPage = () => {
 
 	const handleItemSelect= (item)  => {
 		setCurSection(item.section);
+		setCurItem(item);
 		navigate(`item/${item.code}`)
 	}
 
@@ -144,8 +145,8 @@ export const NotepadOverviewPage = () => {
 	const listItems = filteredArray.map((item) =>
 			<div className="row wrapper" key={item.key}>
 				<div onClick={()=> handleSectionSelect(item.section)} className="col-3" style={{ border: '1px solid lightgray', cursor: "pointer" }}>{item.section}</div>
-				<div  onClick={()=> handleItemSelect(item)} data-value={item.key} className={`col-9 text-nowrap text-break`} style={{border: '1px solid lightgray', cursor: "pointer" }}>{item.name}</div>{/*onMouseEnter*/}
-				{isOpen ? <div  className="col-12 text-break" style={{   border: '1px solid lightgray' }}> {item.content}</div>:''}
+				<div onClick={()=> handleItemSelect(item)} className={`col-9 text-nowrap text-break`} style={{border: '1px solid lightgray', cursor: "pointer" }}>{item.name}</div>{/*onMouseEnter*/}
+				{isOpen ? <div  className="col-12 text-break" style={{   border: '1px solid lightgray' }}> {getFormatedText(item.content)}</div>:''}
 			</div >
 	);
 
