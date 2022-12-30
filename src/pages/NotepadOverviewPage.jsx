@@ -2,8 +2,6 @@ import {useContext, useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import { CurrentContext } from "../context/ContextProvider";
 
-
-
 export const NotepadOverviewPage = () => {
 
 	const navigate = useNavigate();
@@ -152,7 +150,6 @@ export const NotepadOverviewPage = () => {
 
 	return (
 		<div>
-			<hr />
 			<div className="row" style={{  display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<div className="col-6">
 					<label htmlFor="input-name" className="pe-1">Фильтр </label>
