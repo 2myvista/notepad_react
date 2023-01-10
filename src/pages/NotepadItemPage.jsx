@@ -1,6 +1,10 @@
 import {useContext, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import { CurrentContext } from "../context/ContextProvider";
+import {BiCopy} from "react-icons/bi";
+import {AiOutlineCheck} from "react-icons/ai";
+
+import copy from "copy-to-clipboard";
 
 
 export const NotepadItemPage = () => {
@@ -12,29 +16,32 @@ export const NotepadItemPage = () => {
 	const {itemsList} = useContext(CurrentContext);
 	//const {isSelected, setSelected} = useContext(CurrentContext);
 	const [isSelected, setSelected] = useState(false );
+	const [isCopied, setCopied] = useState(false );
 
 	const {getFormatedText} = useContext(CurrentContext);
 	//setSelected(false);
-//	const [selectedText, setSelectedText] = useContext(CurrentContext);
-/*	const handleText=()=>{
-		setSelectedText();
-	}
-*/
+	//const [selectedText, setSelectedText] = useContext(CurrentContext);
+
 	const handleTextSelect = ()=> {
 		if (`${window.getSelection()}`) {
-			console.log(`Selected text: ${window.getSelection().toString()}`);
-			setSelected('888'+`${window.getSelection().toString()}`);
+			//console.log(`Selected text: ${window.getSelection().toString()}`);
+			setSelected(`${window.getSelection().toString()}`);
 		}
 		else {
-			console.log(`UnSelected text: ${window.getSelection().toString()}`);
+			//console.log(`UnSelected text: ${window.getSelection().toString()}`);
 			setSelected(false);
 		}
-		console.log(isSelected);
+	}
+	const handleTextCopy =(text) => {
+		copy(text);
+		setSelected(false);
+		setCopied(true);
+		setTimeout(() => {
+			setCopied(false);
+		}, 3000);
 	}
 	//console.log(itemsList);
 	const handleSectionSelect =(section) => {
-
-		console.log(section['currentSection']);
 		setCurSection(section['currentSection']);
 		navigate(`/section/${section['currentSection']}`);
 	}
@@ -45,7 +52,8 @@ export const NotepadItemPage = () => {
 
 	return (
 		<div>
-			{isSelected ? <div  className="" style={{   border: '1px solid lightgray' }}> копировать</div>:'***'}
+			{isSelected ? <BiCopy title="копировать выделенный текст"  onClick={()=>handleTextCopy(isSelected)}  style={{float: "right", cursor: 'pointer'}}/>:''}
+			{isCopied ? <AiOutlineCheck title="скопировано"  style={{float: "right"}}/>:''}
 			<div>
 				{itemsList.map((item, index) => {
 					if (item.code === url) {
@@ -58,8 +66,6 @@ export const NotepadItemPage = () => {
 			</div>
 			<hr/>
 			<button className="btn btn-secondary" onClick={()=> handleSectionSelect({currentSection})} style={{ cursor: "pointer" }}> {currentSection}</button>
-
-
 		</div>
 	);
 }
