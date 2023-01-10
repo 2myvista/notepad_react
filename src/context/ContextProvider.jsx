@@ -8,6 +8,7 @@ export const CurrentContextProvider = (props) => {
 		{ key: '1', section: 'linux', code:'linux_ip', name: 'баним IP-адрес', content: "fail2ban-client set ssh banip IP-адрес fail2ban-client nginx banip IP-адрес" },
 		{ key: '2', section: 'ssl', code:'git_ssl', name: 'сборка сертификата', content: "root@ipc2u:~# cat 222423165repl_2.crt SectigoRSADomainValidationSecureServerCA.crt COMODORSAAddTrustCA.crt AddTrustExternalCARoot.crt > ipc2u.de.crt \n cat m_ipc2u_ru.crt COMODORSADomainValidationSecureServerCA.crt COMODORSAAddTrustCA.crt AddTrustExternalCARoot.crt > m.ipc2u.ru.crt \n собираю сертификат, и полученный файл m.ipc2u.ru.crt кладу в папку сертификата, где уже лежат файлы m.ipc2u.ru.crt и m.ipc2u.ru.key \n возможен даже вараиант, когда присылают только 1 сертификат  для продления ----BEGIN CERTIFICATE----- MII .... QxrQ= -----END CERTIFICATE----- \n в таком случае из файла ipc2u.by.crt удалям самый верхний блок ----BEGIN CERTIFICATE-----   ...  ----END CERTIFICATE----- и заменяем его присланным" },
 		{ key: '3', section: 'linux', code:'linux_mysql', name: 'time mysqldump', content: "time mysqldump -uweb -p'_some_pswd' web_ipc2u.ru > web_ipc2u.ru_15022020.sql \n wget --no-check-certificate https://ipc2u.com/files/web_ipc2u.com_18062018.sql" },
+		{ key: '4', section: 'react', code:'js_getSelectionText', name: 'js getSelectionText', content: "function getSelectionText() {\n var text = \"\";\n     var activeEl = document.activeElement;\n var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;\n if (\n (activeElTagName == \"textarea\") || (activeElTagName == \"input\" &&\n /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&\n (typeof activeEl.selectionStart == \"number\")\n ) {\n text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);\n   } else if (window.getSelection) {\n text = window.getSelection().toString();\n }\n return text;\n }\n document.onmouseup = document.onkeyup = document.onselectionchange = function() {\n   document.getElementById(\"sel\").value = getSelectionText();\n };\n Selection:\n <br>\n  <textarea id=\"sel\" rows=\"3\" cols=\"50\"></textarea>\n <p>Please select some text.</p>\n <input value=\"Some text in a text input\">\n <br>\n <input type=\"search\" value=\"Some text in a search input\">\n <br>\n <input type=\"tel\" value=\"4872349749823\">\n <br>\n <textarea>Some text in a textarea</textarea> \n url: https://stackoverflow.com/questions/5379120/get-the%20-highlighted-selected-text" },
 
 		{ key: '5', section: 'ssl', code:'linux_ssl', name: 'ssl сертификаты', content: "root@ipc2u:~# cat 222423165repl_2.crt SectigoRSADomainValidationSecureServerCA.crt COMODORSAAddTrustCA.crt AddTrustExternalCARoot.crt > ipc2u.de.crt" },
 		{ key: '6', section: 'linux', code:'npm', name: 'установка npm',content : "на площадке после установки \n + npm необходимо удалить два пакета gm  и gmsmith, которые помечены как необязательные " },
@@ -29,6 +30,8 @@ export const CurrentContextProvider = (props) => {
 		{ key: '22', section: 'linux', code:'vi_cmd', name: "vi команды",content :"http://rsusu1.rnd.runnet.ru/unix/ucomm/vi.html" },
 		{ key: '23', section: 'linux', code:'extract_ip', name: "вытащить ip",content :"cat access_nginx.log.1  | grep \"POST /auth/register\" > registers" },
 		{ key: '24', section: 'linux', code:'grep', name: "grep поиск",content :"grep -lr 'строка поиска' рекурсивно ищет и выведет файл, в котором находится искомая строка\n grep -w '213.180.203.74' access_nginx.log  - вывести строки \n grep -c '213.180.203.74' access_nginx.log  - подсчитать количество строк\n grep -wr 'timed out'>22.log  - рекурсивно найти 504-е ошибки\n grep -w 'POST /auth/?LOGIN' access_apache.log.2.gz\n grep -w 'POST /auth/?LOGIN' access_apache.log\n find .  loc_cntr.csv" },
+		{ key: '25', section: 'react', code:'react_getSelectionText', name: "получение выделенного текста getSelectionText",content :"https://ru.stackoverflow.com/questions/141961/%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B2%D1%8B%D0%B4%D0%B5%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F-%D1%82%D0%B5%D0%BA%D1%81%D1%82%D0%B0" },
+		{ key: '26', section: 'react', code:'react_edit_in_double_click', name: "редактирование текста по double-click in ReactJS",content :"https://www.educative.io/answers/how-to-edit-text-on-double-click-in-reactjs" },
 	]
 
 	const getFormatedText = (text) => {
@@ -43,6 +46,8 @@ export const CurrentContextProvider = (props) => {
 		return Array.from(number).sort();
 	}
 
+	const [isSelected,setSelected] = useState(false );
+
 	const [sectionsList, setSectionsList] = useState(getSectionsName());
 
 	const [currentSection, setCurrentSection] = useState(
@@ -52,6 +57,13 @@ export const CurrentContextProvider = (props) => {
 	const [currentItem, setCurrentItem] = useState(
 		localStorage.getItem("currentItem") || "none"
 	);
+/*
+	const getSelectedText=()=> {
+		if (`${window.getSelection().toString()}`)
+			console.log(`Selected text: ${window.getSelection().toString()}`);
+	}*/
+
+/*	const [selectedText, setSelectedText] = useState(getSelectedText());*/
 
 	const setCurSection = (section) => {
 		// установим выбранный раздел текущим
@@ -60,10 +72,24 @@ export const CurrentContextProvider = (props) => {
 	}
 
 	const setCurItem = (item) => {
-		// установим выбранный разэлемент текущим
+		// установим выбранный элемент текущим
 		console.log(item.code);
 		setCurrentItem( [item.code]);
 	}
+
+/*	const handleTextSelect = ()=> {
+		if (`${window.getSelection()}`) {
+			console.log(`Selected text: ${window.getSelection().toString()}`);
+			setSelected(true);
+		}
+		else {
+			console.log(`UnSelected text: ${window.getSelection().toString()}`);
+			setSelected(false);
+		}
+		console.log(isSelected);
+
+
+	}*/
 
 	useEffect(()=> {
 		localStorage.setItem("currentSection", currentSection)
@@ -75,7 +101,7 @@ export const CurrentContextProvider = (props) => {
 
 
 
-	return <CurrentContext.Provider value={{currentSection, setCurSection, currentItem, setCurItem, sectionsList, itemsList, getFormatedText}}>
+	return <CurrentContext.Provider value={{currentSection, setCurSection, currentItem, setCurItem, sectionsList, itemsList, getFormatedText,/* isSelected*/}}>
 		{/*говорим, все пропсы должны быть видимы внутри всех вызываемых компонентов*/}
 		{props.children}
 	</CurrentContext.Provider>
