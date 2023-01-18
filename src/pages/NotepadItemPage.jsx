@@ -3,6 +3,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import { CurrentContext } from "../context/ContextProvider";
 import {BiCopy} from "react-icons/bi";
 import {AiOutlineCheck} from "react-icons/ai";
+import axios from "../api/getData";
+
 
 import copy from "copy-to-clipboard";
 
@@ -40,10 +42,29 @@ export const NotepadItemPage = () => {
 			setCopied(false);
 		}, 3000);
 	}
-	//console.log(itemsList);
+
 	const handleSectionSelect =(section) => {
 		setCurSection(section['currentSection']);
 		navigate(`/section/${section['currentSection']}`);
+	}
+
+	const handleGetSection =(section) => {
+		console.log(section);
+		const fetchData = async () => {
+			try {
+				const response = await Promise.all([
+					axios.get("/",{
+						params: {section: section}
+					})
+					])
+				console.log(response);
+			}
+			catch (err) {
+				console.log(err);
+			}
+
+		}
+		fetchData();
 	}
 
 	useEffect(()=> {
@@ -59,13 +80,23 @@ export const NotepadItemPage = () => {
 					if (item.code === url) {
 						return <div key={index} >
 							<h3>{item.name}</h3>
-							<div  onMouseUp={()=>handleTextSelect()}>{getFormatedText(item.content)}</div>
+							<div onMouseUp={()=>handleTextSelect()}>{getFormatedText(item.content)}</div>
 						</div>
 					}
 				})}
 			</div>
 			<hr/>
-			<button className="btn btn-secondary" onClick={()=> handleSectionSelect({currentSection})} style={{ cursor: "pointer" }}> {currentSection}</button>
+			<div className="row">
+				<div className="col-1">
+					<button className="btn btn-secondary col-mr-1" onClick={()=> handleSectionSelect({currentSection})} style={{ cursor: "pointer" }}> {currentSection}</button>
+				</div>
+				<div className="col-11">
+					<button className="btn btn-secondary" onClick={()=> handleGetSection(currentSection)} style={{ cursor: "pointer" }}> получить данные</button>
+				</div>
+
+			</div>
+
+
 		</div>
 	);
 }

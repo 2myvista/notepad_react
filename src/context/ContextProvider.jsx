@@ -32,6 +32,7 @@ export const CurrentContextProvider = (props) => {
 		{ key: '24', section: 'linux', code:'grep', name: "grep поиск",content :"grep -lr 'строка поиска' рекурсивно ищет и выведет файл, в котором находится искомая строка\n grep -w '213.180.203.74' access_nginx.log  - вывести строки \n grep -c '213.180.203.74' access_nginx.log  - подсчитать количество строк\n grep -wr 'timed out'>22.log  - рекурсивно найти 504-е ошибки\n grep -w 'POST /auth/?LOGIN' access_apache.log.2.gz\n grep -w 'POST /auth/?LOGIN' access_apache.log\n find .  loc_cntr.csv" },
 		{ key: '25', section: 'react', code:'react_getSelectionText', name: "получение выделенного текста getSelectionText",content :"https://ru.stackoverflow.com/questions/141961/%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B2%D1%8B%D0%B4%D0%B5%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F-%D1%82%D0%B5%D0%BA%D1%81%D1%82%D0%B0" },
 		{ key: '26', section: 'react', code:'react_edit_in_double_click', name: "редактирование текста по double-click in ReactJS",content :"https://www.educative.io/answers/how-to-edit-text-on-double-click-in-reactjs" },
+		{ key: '27', section: 'linux', code:'openserver', name: "документация openserver",content :"https://ospanel.io/docs/" },
 	]
 
 	const getFormatedText = (text) => {
