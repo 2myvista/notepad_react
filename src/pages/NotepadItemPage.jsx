@@ -53,8 +53,8 @@ export const NotepadItemPage = () => {
 		const fetchData = async () => {
 			try {
 				const response = await Promise.all([
-					axios.get("/",{
-						params: {section: section}
+					axios.get("/section/"+section,{
+						/*params: {section: section}*/
 					})
 					])
 				console.log(response);
